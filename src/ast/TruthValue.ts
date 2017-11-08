@@ -1,6 +1,6 @@
 import { Exp } from './ASTNode';
 import { CompilationContext } from '../compileCIL/CompilationContext';
-
+import { State } from '../State/State';
 /**
   Representación de valores de verdad (cierto o falso).
 */
@@ -20,8 +20,16 @@ export class TruthValue implements Exp {
     return this.value ? "true" : "false";
   }
 
+  optimization(state:State){
+    return this;
+  }
   compileCIL(context: CompilationContext): CompilationContext {
-    return undefined;
+    if(this.value){
+      context.appendInstruction("ldc.i4.1");
+    } else {
+      context.appendInstruction("ldc.i4.0");
+    }
+    return context;
   }
 
   maxStackIL(value: number): number {

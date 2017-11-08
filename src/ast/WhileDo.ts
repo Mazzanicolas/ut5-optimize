@@ -1,6 +1,7 @@
 import { Exp, Stmt } from './ASTNode';
 import { CompilationContext } from '../compileCIL/CompilationContext';
-
+import { State } from '../State/State';
+import { TruthValue } from '../ast/TruthValue';
 /**
   Representación de las iteraciones while-do.
 */
@@ -21,6 +22,16 @@ export class WhileDo implements Stmt {
     return `while ${this.cond.unparse()} do { ${this.body.unparse()} }`;
   }
 
+  optimization(state:State){
+    let cnd = this.cond.optimization(state);
+    let bdy = this.cond.optimization(state);
+    if(cnd instanceof TruthValue){
+      if(!cnd.value){
+        return;
+      }
+    }
+    return new WhileDo(cnd,bdy);
+  }
   compileCIL(context: CompilationContext): CompilationContext {
     return undefined;
   }

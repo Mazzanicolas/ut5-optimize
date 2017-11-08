@@ -1,5 +1,6 @@
 import { Stmt } from './ASTNode';
 import { CompilationContext } from '../compileCIL/CompilationContext';
+import { State } from '../State/State';
 
 /**
   Representación de las secuencias de sentencias.
@@ -28,8 +29,17 @@ export class Sequence implements Stmt {
     return `{ ${statements} }`
   }
 
+  optimization(state:State){
+    for(var i=0; i<=this.statements.length; i++){
+      this.statements[i].optimization(state);
+    }
+  }
+
   compileCIL(context: CompilationContext): CompilationContext {
-    return undefined;
+    for(var i = 0; i < this.statements.length; i++){
+      context = this.statements[i].compileCIL(context);
+    }
+    return context;
   }
 
   maxStackIL(value: number): number {
